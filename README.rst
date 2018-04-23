@@ -1,6 +1,9 @@
 mitest - Mongo Inspired policy test
 ===================================
 
+.. image:: https://travis-ci.org/WYFDEV/mitest.svg?branch=master
+    :target: https://travis-ci.org/WYFDEV/mitest
+
 Introduction
 ------------
 
