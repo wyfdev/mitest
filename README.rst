@@ -40,7 +40,7 @@ test, if given data match policy::
     [('a', {'$lt': 10}, 11)]
 
 Arrtibute `how` express how data match or not match policy.
-For example, `("a", {"$lt": 10}, 9)` mean that for variable `a`, policy is `lessthen 2`,
+For example, `("a", {"$lt": 10}, 9)` mean that for variable `a`, policy is `lessthen 10`,
 and (or but, if not match) given data is `9`.
 
 
