@@ -3,6 +3,11 @@ mitest - Mongo Inspired policy test
 
 .. image:: https://travis-ci.org/WYFDEV/mitest.svg?branch=master
     :target: https://travis-ci.org/WYFDEV/mitest
+    :alt: Travis status for master branch
+
+.. image:: https://codecov.io/gh/WYFDEV/mitest/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/WYFDEV/mitest
+   :alt: codecov.io status for master branch
 
 Introduction
 ------------
