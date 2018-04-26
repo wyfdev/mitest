@@ -1,3 +1,7 @@
-from .mitest import TestPolicy
+__version__ = '0.2'
 
-__version__ = '0.1'
+from .mitest import (
+    TestPolicy,
+    PolicySyntaxErrorException,
+    DataKeyErrorException
+)

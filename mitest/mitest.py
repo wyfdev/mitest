@@ -19,6 +19,14 @@ PolicyDict = NewType('PolicyDict', dict)    # policy
 TargetDict = NewType('TargetDict', dict)    # target data of test
 
 
+class PolicySyntaxErrorException(Exception):
+    pass
+
+
+class DataKeyErrorException(Exception):
+    pass
+
+
 class TestPolicy(object):
 
     def __init__(self, policy: PolicyDict):
@@ -64,26 +72,44 @@ class Test(object):
         return self.match if self else self.not_match
 
     def test(self, k: str, v: Any) -> bool:
-        '''test if data match policy, recursive, recoreding match and not match'''
+        '''test if data match policy, recursive, recoreding match and not match
+        'param k: key of variable or $and, $or
+        :param v: value of variable or sub policy
+        '''
         match = None
         try:
-            if k[0] == '$':
+            if k.startswith('$'):
                 # {'$relationship': <sub_policy or value_judgement>}
                 if k not in ('$and', '$or'):
                     match = (self.key, {k: v}, self.value)
                 assert getattr(self, k.replace('$', '_'))(v)
-            elif not isinstance(v, (dict, list)):
-                # {'var': <value>}  equal  {'var': {'$eq': <value>}}
-                match = (k, {'$eq': v}, v)
-                assert self.target[k] == v
             else:
-                # {'var', <sub_policy in dict or list>}
-                self.key = k
-                self.value = self.target[k]
-                return all([self.test(subk, subv) for subk, subv in self._ensure_items(v)])
+                if self.key is not None:
+                    raise PolicySyntaxErrorException(
+                        'Variable under sub policy of other variable')
+
+                if isinstance(v, (dict, list)):
+                    # {'var', <sub_policy in dict or list>}
+                    try:
+                        self.key = k
+                        self.value = self.target[k]
+                        return all([
+                            self.test(subk, subv) for subk, subv in self._ensure_items(v)
+                        ])
+                    finally:
+                        # for 'Variable under sub policy of other variable' error checking
+                        self.key = None
+                else:
+                    # {'var': <value>}  equal  {'var': {'$eq': <value>}}
+                    match = (k, {'$eq': v}, v)
+                    assert self.target[k] == v
         except AssertionError:
             if match is not None: self.not_match.append(match)
             return False
+        except KeyError as err:
+            raise DataKeyErrorException from err
+        except TypeError:
+            raise
         except Exception:
             raise
         else:
@@ -96,10 +122,8 @@ class Test(object):
         def traverse(t):
             if isinstance(t, dict):
                 items.extend(t.items())
-            elif isinstance(t, list):
+            else:       # isinstance(t, list)
                 for i in t: traverse(i)
-            else:
-                raise Exception('Unexcepted value', t)
         traverse(data)
         return items
 
