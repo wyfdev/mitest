@@ -9,6 +9,10 @@ mitest - Mongo Inspired policy test
    :target: https://codecov.io/gh/WYFDEV/mitest
    :alt: codecov.io status for master branch
 
+.. image:: https://badge.fury.io/py/mitest.svg
+    :target: https://badge.fury.io/py/mitest
+    :alt: pypi status
+
 Introduction
 ------------
 
